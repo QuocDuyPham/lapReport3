@@ -89,12 +89,10 @@ if ((millis() - lastDebounceTime) > deBounceDelay){
 
     if(buttonState == HIGH){
       count++;
-      if (count=4){
+      if (count==4){
         count = 1; 
       }
-    }
-  }
-}
+
  Switch case(count){
    case 1:
   sensors_event_t event;
@@ -103,7 +101,6 @@ if ((millis() - lastDebounceTime) > deBounceDelay){
     Serial.println(F("Error reading temperature!"));
   }
   else {
-  
     lcd.setCursor(0,0);
     lcd.print("T=" );
     lcd.print(event.temperature);
@@ -111,8 +108,37 @@ if ((millis() - lastDebounceTime) > deBounceDelay){
     lcd.print("C");
     Serial.print(F("Temperature Celcius: "));
     Serial.print(event.temperature);
-    Serial.println(F("°C"));
+    Serial.println(F("°C"))
+  }
+  break;
+	 case 2:
+  }
+  // Get humidity event and print its value.
+  dht.humidity().getEvent(&event);
+  if (isnan(event.relative_humidity)) {
+    Serial.println(F("Error reading humidity!"));
 
+  }
+  else {
+    Serial.print(F("Humidity: "));
+    Serial.print(event.relative_humidity);
+    Serial.println(F("%"));
+  
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("H= ");
+    lcd.print(event.relative_humidity);
+    lcd.print("%");
+    lcd.print("         ");
+  } 
+break;
+	case 3: 
+         //Display temperature in Fahrenheit
+          dht.temperature().getEvent(&event);
+          if (isnan(event.temperature)) {
+            Serial.println(F("Error reading temperature!"));
+	  }
+else {
     Serial.print(F("Temperature Fahrenheit: "));
     float Fvalue = ((event.temperature*9/5) + 32);
     Serial.print(Fvalue);
@@ -126,28 +152,12 @@ if ((millis() - lastDebounceTime) > deBounceDelay){
     lcd.print(Fvalue);
     lcd.write((byte)0);
     lcd.print("F");
-
-  
+}
+break;
+    }
   }
-  // Get humidity event and print its value.
-  dht.humidity().getEvent(&event);
-  if (isnan(event.relative_humidity)) {
-    Serial.println(F("Error reading humidity!"));
+ }
+}
+lastButtonState = reading;
 
-  }
-  else {
-    Serial.print(F("Humidity: "));
-    Serial.print(event.relative_humidity);
-    Serial.println(F("%"));
-  
-
-    lcd.setCursor(0,1);
-    lcd.print("H= ");
-    lcd.print(event.relative_humidity);
-    lcd.print("%");
-    lcd.print("         ");
-
-  
-  }
-   
 }
