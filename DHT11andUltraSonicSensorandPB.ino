@@ -4,15 +4,11 @@
 #include <LiquidCrystal.h>
 
 LiquidCrystal lcd(2,3,9,10,11,12);
-const int pB = 4;
-int buttonState;
-int value = 0; 
-float x;
-int lastButtonState = HIGH;
-float temperature=0;
-float duration, distance;
-float soundsp= 0;
-float soundcm= 0;
+float x; // to convert the temparture from degree to farenheit
+float temperature=0; // to store the value from event temperature
+float duration, distance; 
+float soundsp= 0; // to find the speed of the sound
+float soundcm= 0; // to convert the speed to cm/ms
 #define trigPin 6   // This sends the trigger signal
 #define echoPin 7 // This receives the echo signal
 
@@ -20,17 +16,9 @@ float soundcm= 0;
 
 
 #define DHTPIN 8     // Digital pin connected to the DHT sensor 
-// Feather HUZZAH ESP8266 note: use pins 3, 4, 5, 12, 13 or 14 --
-// Pin 15 can work but DHT must be disconnected during program upload.
 
 // Uncomment the type of sensor in use:
 #define DHTTYPE    DHT11     // DHT 11
-//#define DHTTYPE    DHT22     // DHT 22 (AM2302)
-//#define DHTTYPE    DHT21     // DHT 21 (AM2301)
-
-// See guide for details on sensor wiring and usage:
-//   https://learn.adafruit.com/dht/overview
-
 byte customChar[8] = {
   B11100,
   B10100,
@@ -78,37 +66,34 @@ void setup() {
   //initialize lcd display
   lcd.begin(16, 2);
   lcd.createChar(0,customChar);
-  pinMode(pB, INPUT_PULLUP);
   pinMode(trigPin, OUTPUT);    // Assign trigPin as OUTPUT
 pinMode(echoPin, INPUT);     // Assign echoPin as Input
-
+   delayMS = sensor.min_delay / 1000;
 }
 
 void loop() {
-  // Delay between measurements.
-  //delay(delayMS);
+  // Delay between measurements
+   delay(delayMS);
   // Get temperature event and print its value.
   sensors_event_t event;
   dht.temperature().getEvent(&event);
   if (isnan(event.temperature)) {
     Serial.println(F("Error reading temperature!"));
- 
-
   }
   else {
     Serial.print(F("Temperature: "));
     Serial.print(event.temperature);
-    Serial.println(F("°C"));
+    Serial.println(F("°C")
+// store the value of event.temperature 
 temperature = event.temperature; 
   }
   // Get humidity event and print its value.
   dht.humidity().getEvent(&event);
   if (isnan(event.relative_humidity)) {
     Serial.println(F("Error reading humidity!"));
-
   }
   else {
-    Serial.print(F("Humidity: "));
+    Serial.print(F(" \t Humidity: "));
     Serial.print(event.relative_humidity);
     Serial.println(F("%"));
   
@@ -124,14 +109,16 @@ duration = pulseIn(echoPin, HIGH);
 distance = (duration /2 ) * 0.0343;
 
 // Print the distance on the serial monitor
-Serial.print("Distance: ");
-/*If the distance is out of range (less than 2cm or more than 400cm), 
-it prints "Out of Range" instead of the distance*/
+Serial.print(" \t Distance: ");
+/*If the distance is out of range (which is ess than 2cm or more than 400cm), 
+it will prints "Out of Range" instead of the distance*/
 if (distance >= 400 || distance <= 2) {
   Serial.println("Out od Range");
+// if the distance is between 2 and 400 it will print the distacne
 } else {
-  Serial.print(distance);
-  Serial.println(" cm");
+  Serial.print( \t distance);
+  Serial.println(" cm")
+}
       // Calculate the Speed of Sound in M/S
     soundsp = 331.4 + (0.606 * temperature) + (0.0124 * event.relative_humidity);
     
@@ -139,45 +126,38 @@ if (distance >= 400 || distance <= 2) {
     
     soundcm = soundsp / 10000;
 }
-  }
-   buttonState = digitalRead(pB);
-  if (buttonState == LOW && lastButtonState == HIGH) { // Check if button was just pressed
-  delay(50);
-  buttonState = digitalRead(pB);
- if (buttonState == LOW) {
-   value++; 
- if (value > 3) {
-   value = 1;
+
+// to convert the degree temperature to Farenheit 
+//serial print that value
  x = (event.temperature*9/5)+32.0;
- }
- }
-  }
-  lastButtonState = buttonState;
-    switch (value) {
-     case 1:
-     lcd.clear();
+ serial.println("Far = ");
+ serial.print(x);
+ delays(500);
+// Serial print the speed of the sound 
+serial.println(" \t sound  = ");
+ serial.print(x);
+ delays(500);
+// lcd print out the value of humidity and degree temperature
      lcd.setCursor(0,0);
      lcd.print(F("Hum:"));
      lcd.print(event.relative_humidity);
      lcd.print(F("%"));
      lcd.print("  ");
-     lcd.setCursor(0,1);
-     lcd.print(F("Temp:"));
+     lcd.setCursor(0,0);
+     lcd.print(F("T:"));
      lcd.print(temperature);
      lcd.write((byte)0);
      lcd.print(F("C"));
      lcd.print("  ");
-     break ; 
-     case 2:
-lcd.clear();
-lcd.setCursor(0,0);
+
+lcd.setCursor(0,1);
 lcd.print("Distance: ");
 if (distance >= 400 || distance <= 2) {
   lcd.setCursor(0,1);
   lcd.print("Out of Range");
 } else {
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0,1);
   lcd.print("Distance: ");
   lcd.print(distance);
   lcd.print("cm");
@@ -188,14 +168,4 @@ if (distance >= 400 || distance <= 2) {
      lcd.print(F("F"));
      lcd.print(" ");
 }
-     break ;
- 
-     case 3:
-     lcd.clear();
-     lcd.setCursor(0,0);
-     lcd.print("speed= ");
-     lcd.setCursor(0,1);
-     lcd.print(soundcm);
-     lcd.print("cm/ms");
-   }
   }
