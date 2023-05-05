@@ -128,7 +128,7 @@ distance = (duration /2 ) * 0.0343;
 
 // Print the distance on the serial monitor
 Serial.print("Distance: ");
-/*If the distance is out of range (less than 2cm or more than 400cm), 
+//*If the distance is out of range (less than 2cm or more than 400cm), 
 it prints "Out of Range" instead of the distance
 if (distance >= 400 || distance <= 2) {
   Serial.println("Out od Range");
@@ -178,3 +178,4 @@ if (distance >= 400 || distance <= 2) {
   lcd.print(" cm");
 }
   }
+}
