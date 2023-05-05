@@ -35,9 +35,7 @@ byte customChar[8] = {
   B00000
 };
 
-DHT_Unified dht(DHTPIN, DHTTYPE);
-
-uint32_t delayMS;
+DHT_Unified dht(DHTPIN, DHTTYPE);;
 
 void setup() {
   Serial.begin(9600);
@@ -67,13 +65,12 @@ void setup() {
   Serial.print  (F("Resolution:  ")); Serial.print(sensor.resolution); Serial.println(F("%"));
   Serial.println(F("------------------------------------"));
   // Set delay between sensor readings based on sensor details.
-  //delayMS = sensor.min_delay / 1000;
+  //delayMS = sensor.min_delay / 5000;
   //initialize lcd display
   lcd.begin(16, 2);
   lcd.createChar(0,customChar);
   pinMode(pB, INPUT_PULLUP);
-  
-
+ 
 }
 
 void loop() {
@@ -82,8 +79,6 @@ void loop() {
   dht.temperature().getEvent(&event);
   if (isnan(event.temperature)) {
     Serial.println(F("Error reading temperature!"));
- 
-
   }
   else {
     Serial.print(F("Temperature: "));
@@ -105,7 +100,6 @@ temperature = event.temperature;
   }
    buttonState = digitalRead(pB); // Read the value from the PB
   if (buttonState == LOW && lastButtonState == HIGH) { // Check if button was just pressed
-  delay(50);
   buttonState = digitalRead(pB);
  if (buttonState == LOW) {
    value++; 
@@ -135,7 +129,6 @@ if (distance >= 400 || distance <= 2) {
 } else {
   Serial.print(distance);
   Serial.println(" cm");
-  delay(500);
 }
   lastButtonState = buttonState;
   // use switch case to the lcd screen base on the value of PB 
