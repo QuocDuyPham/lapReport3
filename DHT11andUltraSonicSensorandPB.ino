@@ -6,7 +6,7 @@
 LiquidCrystal lcd(2,3,9,10,11,12);
 const int pB = 4;
 int buttonState;
-int value = 0;
+int value = 0; 
 float x;
 int lastButtonState = HIGH;
 float temperature=0;
