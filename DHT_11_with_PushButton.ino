@@ -3,32 +3,25 @@
 // Written by Tony DiCola for Adafruit Industries
 // Released under an MIT license.
 
-// REQUIRES the following Arduino libraries:
-// - DHT Sensor Library: https://github.com/adafruit/DHT-sensor-library
-// - Adafruit Unified Sensor Lib: https://github.com/adafruit/Adafruit_Sensor
-
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <DHT_U.h>
 #include <LiquidCrystal.h>
-e
+// intialize pins for the lcd
 LiquidCrystal lcd(2,3,9,10,11,12);
-const int pB = 4;
-int buttonState;
-int value = 0; // to store the time PB has been pressed
-float x; // to convert the degree temperature to Farenhiet
-int lastButtonState = HIGH;
-float temperature=0; // to store the event temperature 
-
-
-
+const int pB = 4;// intialize Push Button at pin 4
+int buttonState; // the current state of the input pin 
+int value = 0; // to store the number of time Pb has been pressed
+float x;// to store and convert the degree temperature to Fahrenheit 
+int lastButtonState = HIGH; // the previous state of the inputpin 
+float temperature=0; // to store the event.temperaturen as float 
 
 
 #define DHTPIN 8     // Digital pin connected to the DHT sensor 
 
 // Uncomment the type of sensor in use:
 #define DHTTYPE    DHT11     // DHT 11
-// To create the degree sympol on lcd
+// create the byte to print the degree sympol on lcd
 byte customChar[8] = {
   B11100,
   B10100,
@@ -75,13 +68,15 @@ void setup() {
   //delayMS = sensor.min_delay / 1000;
   //initialize lcd display
   lcd.begin(16, 2);
-  lcd.createChar(0,customChar);
-  pinMode(pB, INPUT_PULLUP);
+  lcd.createChar(0,customChar); // to create the character degree for pcd
+  pinMode(pB, INPUT_PULLUP); // to intialize the PB as inputPull up 
   
 
 }
 
 void loop() {
+  // Delay between measurements.
+  //delay(delayMS);
   // Get temperature event and print its value.
   sensors_event_t event;
   dht.temperature().getEvent(&event);
@@ -108,7 +103,7 @@ temperature = event.temperature;
     Serial.println(F("%"));
   
   }
-   buttonState = digitalRead(pB); // Read the value from the PB
+   buttonState = digitalRead(pB);
   if (buttonState == LOW && lastButtonState == HIGH) { // Check if button was just pressed
   delay(50);
   buttonState = digitalRead(pB);
@@ -121,8 +116,9 @@ temperature = event.temperature;
  }
   }
   lastButtonState = buttonState;
-  // use switch case to the lcd screen base on the value of PB 
+  
     switch (value) {
+  // case 1 display humnidity    
      case 1:
      lcd.setCursor(0,0);
      lcd.print(F("Hum:"));
@@ -130,6 +126,7 @@ temperature = event.temperature;
      lcd.print(F("%"));
      lcd.print("  ");
      break ; 
+     // case 2 display the degree temperature
      case 2:
      lcd.setCursor(0,0);
      lcd.print(F("Temp:"));
@@ -138,13 +135,13 @@ temperature = event.temperature;
      lcd.print(F("C"));
      lcd.print("  ");
      break ;
- 
+ // case 3 print the Fahrenheit degree
      case 3:
      lcd.setCursor(0,0);
-     lcd.print(F("Far:"));
+     lcd.print("Far:");
      lcd.print(x);
      lcd.write((byte)0);
-     lcd.print(F("F"));
+     lcd.print("F");
      lcd.print(" ");
    }
   }
